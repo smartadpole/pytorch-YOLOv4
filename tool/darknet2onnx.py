@@ -14,8 +14,8 @@ def transform_to_onnx(cfgfile, weightfile, batch_size=1, onnx_file_name=None):
     if batch_size <= 0:
         dynamic = True
 
-    input_names = ["input"]
-    output_names = ['boxes', 'confs']
+    input_names = ['input']
+    output_names = ['cls_and_bbox', 'anchors']
 
     if dynamic:
         x = torch.randn((1, 3, model.height, model.width), requires_grad=True)

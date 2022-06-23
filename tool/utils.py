@@ -178,9 +178,9 @@ def post_processing(img, conf_thresh, nms_thresh, output):
     # anchor_step = len(anchors) // num_anchors
 
     # [batch, num, 1, 4]
-    box_array = output[0]
+    box_array = output[0][:, :, 0:4]
     # [batch, num, num_classes]
-    confs = output[1]
+    confs = output[0][:, :, 4:]
 
     t1 = time.time()
 
@@ -191,7 +191,7 @@ def post_processing(img, conf_thresh, nms_thresh, output):
     num_classes = confs.shape[2]
 
     # [batch, num, 4]
-    box_array = box_array[:, :, 0]
+    # box_array = box_array[:, :, 0]
 
     # [batch, num, num_classes] --> [batch, num]
     max_conf = np.max(confs, axis=2)

@@ -230,7 +230,11 @@ class Darknet(nn.Module):
         if self.training:
             return out_boxes
         else:
-            return get_region_boxes(out_boxes)
+            # return get_region_boxes(out_boxes)
+            boxes, confs = get_region_boxes(out_boxes)
+            boxes = boxes[:, :, 0, :]
+            output = torch.cat([boxes, confs], dim=-1)
+            return  output, confs
 
     def print_network(self):
         print_cfg(self.blocks)
@@ -416,7 +420,10 @@ class Darknet(nn.Module):
                 yolo_layer.num_anchors = int(block['num'])
                 yolo_layer.anchor_step = len(yolo_layer.anchors) // yolo_layer.num_anchors
                 yolo_layer.stride = prev_stride
-                yolo_layer.scale_x_y = float(block['scale_x_y'])
+                if 'scale_x_y' in block.keys():
+                    yolo_layer.scale_x_y = float(block['scale_x_y'])
+                else:
+                    yolo_layer.scale_x_y = 1.0
                 # yolo_layer.object_scale = float(block['object_scale'])
                 # yolo_layer.noobject_scale = float(block['noobject_scale'])
                 # yolo_layer.class_scale = float(block['class_scale'])
